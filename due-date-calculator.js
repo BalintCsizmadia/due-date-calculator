@@ -27,33 +27,30 @@ class DueDateCalculator {
    */
   calculateDueDate(submitDate, turnaroundTime) {
     if (!this.isValidParameters(submitDate, turnaroundTime)) {
-      throw new Error("Invalid parameters");
+      throw new Error("Invalid parameter(s)");
     }
     if (this.isValidSubmitDate(submitDate)) {
-      let tempTurnaroundHours = turnaroundTime;
+      let tempTurnaroundTime = turnaroundTime;
       let tempDate = new Date(submitDate);
 
-      while (tempTurnaroundHours > 0) {
+      while (tempTurnaroundTime > 0) {
         const hoursLeftFromWorkday =
           workHours.WORKDAY_END - tempDate.getHours();
-        // decrease turnaround hours
-        tempTurnaroundHours -= hoursLeftFromWorkday;
+        // decrease turnaround time
+        tempTurnaroundTime -= hoursLeftFromWorkday;
         this.handleDayChanges(tempDate, workHours.WORKDAY_START);
       }
       // handle remainders
-      if (tempTurnaroundHours < 0) {
+      if (tempTurnaroundTime < 0) {
         this.handleDayChanges(
           tempDate,
-          workHours.WORKDAY_END + tempTurnaroundHours,
+          workHours.WORKDAY_END + tempTurnaroundTime,
           false
         );
-        tempTurnaroundHours = 0;
+        tempTurnaroundTime = 0;
       }
       return tempDate;
     } else {
-      console.warn(
-        "Days must be between Monday to Friday and hours must be between 9AM to 5PM"
-      );
       throw new Error("Invalid submit date");
     }
   }
@@ -86,8 +83,8 @@ class DueDateCalculator {
   /**
    *
    * @param {number} day
-   * @returns true if day is between Monday to Friday
-   */
+   * @returns true if day is between Monday and Friday
+   */to
   isValidWorkDay(day) {
     return day <= days.FRIDAY;
   }
@@ -97,22 +94,19 @@ class DueDateCalculator {
    * @param {Date} date
    * @param {number} startHour
    * @param {boolean} increaseDay
-   * @description set the next or previous valid day (between Monday to Friday) and start hours
+   * @description set the next or previous valid day (between Monday and Friday) and start hours
    */
   handleDayChanges(date, startHour, increaseDay = true) {
     if (increaseDay) {
-      if (date.getDay() === days.FRIDAY) {
-        date.setDate(date.getDate() + 3);
-      } else {
-        date.setDate(date.getDate() + 1);
-      }
-      date.setHours(startHour);
+      date.setDate(
+        date.getDay() === days.FRIDAY ? date.getDate() + 3 : date.getDate() + 1
+      );
     } else {
       // decrease day
       date.setDate(
         date.getDay() === days.MONDAY ? date.getDate() - 3 : date.getDate() - 1
       );
-      date.setHours(startHour);
     }
+    date.setHours(startHour);
   }
 }

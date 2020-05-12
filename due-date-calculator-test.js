@@ -37,10 +37,17 @@ describe("Testing the functionality", () => {
       const result = calculator.calculateDueDate(submitDate, 24);
       expect(result.getMonth() === 8).toEqual(true);
     }),
-    it('should throw "Invalid parameters" error', () => {
+    it("should return true if year changes", function () {
+      const submitDate = new Date("Dec 31, 2020");
+      submitDate.setHours(9);
+      expect(submitDate.getFullYear() === 2020).toEqual(true);
+      const result = calculator.calculateDueDate(submitDate, 16);
+      expect(result.getFullYear() === 2021).toEqual(true);
+    }),
+    it('should throw "Invalid parameter(s)" error', () => {
       expect(() =>
         calculator.calculateDueDate(new Date("May 8, 2020"), "16")
-      ).toThrow(new Error("Invalid parameters"));
+      ).toThrow(new Error("Invalid parameter(s)"));
     }),
     it('should throw "Invalid submit date" error', () => {
       expect(() =>
